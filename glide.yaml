@@ -1,0 +1,6 @@
+package: github.com/zhaowanda/go.rpc
+import:
+- package: golang.org/x/net
+- package: golang.org/x/sys
+- package: github.com/fatih/color
+  version: ~1.5.0
