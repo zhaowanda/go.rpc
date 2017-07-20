@@ -12,10 +12,8 @@ import (
 	context "golang.org/x/net/context"
 )
 
-const defaultBufferSize = 4 * 1024
 
-
-type serverCodec struct {
+type clientCodec struct {
 	mu   sync.Mutex // exclusive writer lock
 	resp codecx.ResponseHeader
 	enc  *Encoder
@@ -35,7 +33,7 @@ type serverCodec struct {
 // server calls Close when finished with the connection. ReadRequestBody
 // may be called with a nil argument to force the body of the request to be
 // read and discarded.
-func NewServerCodec(rwc io.ReadWriteCloser) core.ServerCodec {
+func NewClientCodec(rwc io.ReadWriteCloser) core.ServerCodec {
 	w := bufio.NewWriterSize(rwc, defaultBufferSize)
 	r := bufio.NewReaderSize(rwc, defaultBufferSize)
 	return &serverCodec{
@@ -47,13 +45,12 @@ func NewServerCodec(rwc io.ReadWriteCloser) core.ServerCodec {
 }
 
 
-func (c *serverCodec) WriteResponse(context context.Context, resp *rpc.Response, body interface{}) error {
+func (c *clientCodec) WriteRequest(context context.Context, req *rpc.Request, body interface{}) error {
 	c.mu.Lock()
-	c.resp.Method = resp.ServiceMethod
-	c.resp.Seq = resp.Seq
-	c.resp.Error = resp.Error
+	c.req.Method = req.ServiceMethod
+	c.req.Seq = req.Seq
 
-	err := encode(c.enc, &c.resp)
+	err := encode(c.enc, &c.req)
 	if err != nil {
 		c.mu.Unlock()
 		return err
@@ -67,24 +64,25 @@ func (c *serverCodec) WriteResponse(context context.Context, resp *rpc.Response,
 	return err
 }
 
-func (c *serverCodec) ReadRequestHeader(context context.Context, req *rpc.Request) error {
+func (c *clientCodec) ReadResponseHeader(context context.Context, resp *rpc.Response) error {
 	c.req.Reset()
 	if err := c.dec.Decode(&c.req); err != nil {
 		return err
 	}
 
-	req.ServiceMethod = c.req.Method
-	req.Seq = c.req.Seq
+	resp.ServiceMethod = c.req.Method
+	resp.Seq = c.req.Seq
+	resp.Error = c.resp.Error
 	return nil
 }
 
-func (c *serverCodec) ReadRequestBody(context context.Context, body interface{}) error {
+func (c *clientCodec) ReadResponseBody(context context.Context, body interface{}) error {
 	if pb, ok := body.(proto.Message); ok {
 		return c.dec.Decode(pb)
 	}
 	return fmt.Errorf("%T does not implement proto.Message", body)
 }
 
-func (c *serverCodec) Close() error { return c.c.Close() }
+func (c *clientCodec) Close() error { return c.c.Close() }
 
 
