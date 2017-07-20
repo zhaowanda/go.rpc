@@ -7,9 +7,7 @@ import (
 	"sync"
 	"github.com/zhaowanda/go.rpc/codec/codecx"
 	"github.com/golang/protobuf/proto"
-	"go.rpc/core"
 	"fmt"
-	"golang.org/x/net/context"
 )
 
 const defaultBufferSize = 4 * 1024
