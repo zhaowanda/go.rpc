@@ -6,6 +6,8 @@ import (
 	"bufio"
 	"github.com/zhaowanda/go.rpc/core"
 	"golang.org/x/net/context"
+	"github.com/zhaowanda/go.rpc/codec"
+	"github.com/zhaowanda/go.rpc/gorpc"
 )
 
 type gobClientCodec struct {
@@ -16,7 +18,7 @@ type gobClientCodec struct {
 }
 
 
-func NewClientCodec(conn io.ReadWriteCloser) core.ClientCodec {
+func NewClientCodec(conn io.ReadWriteCloser) codec.ClientCodec {
 	encBuf := bufio.NewWriter(conn)
 	client := &gobClientCodec{
 		rwc: 	conn,
@@ -27,7 +29,7 @@ func NewClientCodec(conn io.ReadWriteCloser) core.ClientCodec {
 	return client
 }
 
-func (c *gobClientCodec) WriteRequest(ctx context.Context, r *core.Request, body interface{}) (err error) {
+func (c *gobClientCodec) WriteRequest(ctx context.Context, r *gorpc.Request, body interface{}) (err error) {
 	if err = c.enc.Encode(r); err != nil {
 		return
 	}
@@ -37,7 +39,7 @@ func (c *gobClientCodec) WriteRequest(ctx context.Context, r *core.Request, body
 	return c.encBuf.Flush()
 }
 
-func (c *gobClientCodec) ReadResponseHeader(ctx context.Context, r *core.Response) error {
+func (c *gobClientCodec) ReadResponseHeader(ctx context.Context, r *gorpc.Response) error {
 	return c.dec.Decode(r)
 }
 

@@ -7,6 +7,8 @@ import (
 	"golang.org/x/net/context"
 	"github.com/zhaowanda/go.rpc/core"
 	"github.com/zhaowanda/go.rpc/log"
+	"github.com/zhaowanda/go.rpc/codec"
+	"github.com/zhaowanda/go.rpc/gorpc"
 )
 
 type gobServerCodec struct {
@@ -17,7 +19,7 @@ type gobServerCodec struct {
 	closed bool
 }
 
-func NewServerCodec(conn io.ReadWriteCloser) core.ServerCodec {
+func NewServerCodec(conn io.ReadWriteCloser) codec.ServerCodec {
 	buf := bufio.NewWriter(conn)
 	srv := &gobServerCodec{
 		rwc:    conn,
@@ -28,7 +30,7 @@ func NewServerCodec(conn io.ReadWriteCloser) core.ServerCodec {
 	return srv
 }
 
-func (c *gobServerCodec) ReadRequestHeader(ctx context.Context, r *core.Request) error {
+func (c *gobServerCodec) ReadRequestHeader(ctx context.Context, r *gorpc.Request) error {
 	return c.dec.Decode(r)
 }
 
@@ -36,7 +38,7 @@ func (c *gobServerCodec) ReadRequestBody(ctx context.Context, body interface{}) 
 	return c.dec.Decode(body)
 }
 
-func (c *gobServerCodec) WriteResponse(ctx context.Context, r *core.Response, body interface{}) (err error) {
+func (c *gobServerCodec) WriteResponse(ctx context.Context, r *gorpc.Response, body interface{}) (err error) {
 	if err = c.enc.Encode(r); err != nil {
 		if c.encBuf.Flush() == nil {
 			// Gob couldn't encode the header. Should not happen, so if it does,

@@ -7,8 +7,9 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"fmt"
-	"github.com/zhaowanda/go.rpc/core"
 	context "golang.org/x/net/context"
+	"github.com/zhaowanda/go.rpc/gorpc"
+	"github.com/zhaowanda/go.rpc/codec"
 )
 
 
@@ -32,7 +33,8 @@ type clientCodec struct {
 // server calls Close when finished with the connection. ReadRequestBody
 // may be called with a nil argument to force the body of the request to be
 // read and discarded.
-func NewClientCodec(rwc io.ReadWriteCloser) core.ClientCodec {
+
+func NewClientCodec(rwc io.ReadWriteCloser) codec.ClientCodec {
 	w := bufio.NewWriterSize(rwc, defaultBufferSize)
 	r := bufio.NewReaderSize(rwc, defaultBufferSize)
 	return &clientCodec{
@@ -44,7 +46,7 @@ func NewClientCodec(rwc io.ReadWriteCloser) core.ClientCodec {
 }
 
 
-func (c *clientCodec) WriteRequest(context context.Context, req *core.Request, body interface{}) error {
+func (c *clientCodec) WriteRequest(context context.Context, req *gorpc.Request, body interface{}) error {
 	c.mu.Lock()
 	c.req.Method = req.ServiceMethod
 	c.req.Seq = req.Seq
@@ -63,7 +65,7 @@ func (c *clientCodec) WriteRequest(context context.Context, req *core.Request, b
 	return err
 }
 
-func (c *clientCodec) ReadResponseHeader(context context.Context, resp *core.Response) error {
+func (c *clientCodec) ReadResponseHeader(context context.Context, resp *gorpc.Response) error {
 	c.req.Reset()
 	if err := c.dec.Decode(&c.req); err != nil {
 		return err
