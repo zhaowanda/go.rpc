@@ -1,13 +1,16 @@
-package core
+package codec
 
-import context "golang.org/x/net/context"
+import (
+	context "golang.org/x/net/context"
+	"go.rpc/gorpc"
+)
 
 
 type ServerCodec interface {
-	ReadRequestHeader(context.Context, *Request) error
+	ReadRequestHeader(context.Context, *gorpc.Request) error
 	ReadRequestBody(context.Context, interface{}) error
 	// WriteResponse must be safe for concurrent use by multiple goroutines.
-	WriteResponse(context.Context, *Response, interface{}) error
+	WriteResponse(context.Context, *gorpc.Response, interface{}) error
 
 	Close() error
 }
@@ -15,8 +18,8 @@ type ServerCodec interface {
 
 type ClientCodec interface {
 	// WriteRequest must be safe for concurrent use by multiple goroutines.
-	WriteRequest(context.Context, *Request, interface{}) error
-	ReadResponseHeader(context.Context, *Response) error
+	WriteRequest(context.Context, *gorpc.Request, interface{}) error
+	ReadResponseHeader(context.Context, *gorpc.Response) error
 	ReadResponseBody(context.Context, interface{}) error
 
 	Close() error
