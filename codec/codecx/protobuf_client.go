@@ -33,10 +33,10 @@ type clientCodec struct {
 // server calls Close when finished with the connection. ReadRequestBody
 // may be called with a nil argument to force the body of the request to be
 // read and discarded.
-func NewClientCodec(rwc io.ReadWriteCloser) core.ServerCodec {
+func NewClientCodec(rwc io.ReadWriteCloser) core.ClientCodec {
 	w := bufio.NewWriterSize(rwc, defaultBufferSize)
 	r := bufio.NewReaderSize(rwc, defaultBufferSize)
-	return &serverCodec{
+	return &clientCodec{
 		enc: NewEncoder(w),
 		w:   w,
 		dec: NewDecoder(r),
