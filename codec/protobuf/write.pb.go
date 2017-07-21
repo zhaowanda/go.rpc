@@ -12,7 +12,7 @@ It has these top-level messages:
 	RequestHeader
 	ResponseHeader
 */
-package codecx
+package protobuf
 
 import (
 	proto "github.com/golang/protobuf/proto"
