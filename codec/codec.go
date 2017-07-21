@@ -2,7 +2,7 @@ package codec
 
 import (
 	context "golang.org/x/net/context"
-	"go.rpc/gorpc"
+	"github.com/zhaowanda/go.rpc/gorpc"
 )
 
 
