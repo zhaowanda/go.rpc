@@ -3,7 +3,6 @@ package codecx
 import (
 	"io"
 	"bufio"
-	"net/rpc"
 	"sync"
 	"github.com/zhaowanda/go.rpc/codec/codecx"
 	"github.com/golang/protobuf/proto"
@@ -45,7 +44,7 @@ func NewClientCodec(rwc io.ReadWriteCloser) core.ClientCodec {
 }
 
 
-func (c *clientCodec) WriteRequest(context context.Context, req *rpc.Request, body interface{}) error {
+func (c *clientCodec) WriteRequest(context context.Context, req *core.Request, body interface{}) error {
 	c.mu.Lock()
 	c.req.Method = req.ServiceMethod
 	c.req.Seq = req.Seq
@@ -64,7 +63,7 @@ func (c *clientCodec) WriteRequest(context context.Context, req *rpc.Request, bo
 	return err
 }
 
-func (c *clientCodec) ReadResponseHeader(context context.Context, resp *rpc.Response) error {
+func (c *clientCodec) ReadResponseHeader(context context.Context, resp *core.Response) error {
 	c.req.Reset()
 	if err := c.dec.Decode(&c.req); err != nil {
 		return err
