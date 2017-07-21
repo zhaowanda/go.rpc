@@ -1,4 +1,4 @@
-package codecx
+package proto
 
 import (
 	"io"
