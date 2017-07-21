@@ -4,7 +4,6 @@ import (
 	"io"
 	"encoding/gob"
 	"bufio"
-	"github.com/zhaowanda/go.rpc/core"
 	"golang.org/x/net/context"
 	"github.com/zhaowanda/go.rpc/codec"
 	"github.com/zhaowanda/go.rpc/gorpc"
