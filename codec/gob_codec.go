@@ -3,7 +3,7 @@ package codec
 import (
 	"io"
 	"github.com/zhaowanda/go.rpc/core"
-	"go.rpc/codec/gob"
+	"github.com/zhaowanda/go.rpc/codec/gob"
 )
 
 // NewProtobufServerCodec creates a protobuf ServerCodec by https://github.com/mars9/codec
