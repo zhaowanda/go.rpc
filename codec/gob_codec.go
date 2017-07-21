@@ -2,17 +2,15 @@ package codec
 
 import (
 	"io"
-	"github.com/zhaowanda/go.rpc/core"
 	"github.com/zhaowanda/go.rpc/codec/gob"
-	"github.com/zhaowanda/go.rpc/codec"
 )
 
 // NewProtobufServerCodec creates a protobuf ServerCodec by https://github.com/mars9/codec
-func NewGobrCodec(conn io.ReadWriteCloser) codec.ServerCodec {
+func NewGobrCodec(conn io.ReadWriteCloser) ServerCodec {
 	return gob.NewServerCodec(conn)
 }
 
 // NewProtobufClientCodec creates a protobuf ClientCodec by https://github.com/mars9/codec
-func NewGobClientCodec(conn io.ReadWriteCloser) codec.ClientCodec {
+func NewGobClientCodec(conn io.ReadWriteCloser) ClientCodec {
 	return gob.NewClientCodec(conn)
 }
